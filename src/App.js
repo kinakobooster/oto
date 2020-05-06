@@ -26,12 +26,12 @@ const OCTAVE = 12;
 const CHORDSEED = {
   octave: [-12, 0, 12],
   _: [0, 4, 7],
-  _7: [0, 4, 7, 11],
-  _M7: [0, 4, 7, 10],
+  _M7: [0, 4, 7, 11],
+  _7: [0, 4, 7, 10],
   _add9: [0, 4, 7, 14],
   m: [0, 3, 7],
-  m7: [0, 3, 7, 11],
-  mM7: [0, 3, 7, 10],
+  mM7: [0, 3, 7, 11],
+  m7: [0, 3, 7, 10],
 };
 
 const makeChord = (note) => {
@@ -185,6 +185,7 @@ class App extends React.Component {
     this.loop();
   }
   handleLoop() {
+    const synth = new Tone.PolySynth().toMaster();
     this.setState({ isPlay: !this.state.isPlay });
   }
   pushToScore(notesArr, noteNumArr, chordName) {
