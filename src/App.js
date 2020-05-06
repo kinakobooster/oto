@@ -159,14 +159,14 @@ const isDiatonic = (array) => {
   return strippedchord.length === 0;
 };
 
-const scoreVisible = (score, played) => {
+const scoreVisible = (score, played, handleDelete) => {
   return (
     <>
-      {played.map((e) => (
-        <ChordCard dead={true} chordName={e.chordName} array={e.sound} />
+      {played.map((e,index) => (
+        <ChordCard dead={true} chordName={e.chordName} array={e.sound} deleteCard={() => handleDelete(index,'played') } />
       ))}
-      {score.map((e) => (
-        <ChordCard chordName={e.chordName} array={e.sound} />
+      {score.map((e, index) => (
+        <ChordCard chordName={e.chordName} array={e.sound}  deleteCard={() => handleDelete(index,'score')} />
       ))}
     </>
   );
@@ -182,6 +182,7 @@ class App extends React.Component {
     };
     this.pushToScore = this.pushToScore.bind(this);
     this.handleLoop = this.handleLoop.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
     this.loop();
   }
   handleLoop() {
@@ -219,6 +220,19 @@ class App extends React.Component {
       this.soundFromStack();
     }, (2 / defaultBpm) * 60 * 1000);
   }
+  handleDelete(index, position) {
+    if (position === 'played') {
+      let arr = this.state.played
+      arr.splice(index, 1)
+      this.setState({played: arr})
+    }else{
+      let arr = this.state.score
+      arr.splice(index, 1)
+      this.setState({score: arr})
+    }
+
+  }
+
   render() {
     return (
       <>
@@ -229,7 +243,7 @@ class App extends React.Component {
         </button>
         <h2>score</h2>
         <div className="yoko scoreboard">
-          {scoreVisible(this.state.score, this.state.played)}
+          {scoreVisible(this.state.score, this.state.played, this.handleDelete)}
         </div>
         <h2>note</h2>
         {scaleNotes.map((e) => {

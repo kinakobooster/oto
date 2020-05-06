@@ -34,8 +34,18 @@
   vertical-align:top;
 }
 
+.chordcard:hover {
+  background: #FFAAAA;
+  opacity: 0.4;
+}
+
+.chordcard:hover::before {
+  content: 'けす';
+  color: #FF3333;
+}
+
 .dead {
-  background: #AAAAAA !important;
+  background: #AAAAAA;
 }
 
 .yoko {
