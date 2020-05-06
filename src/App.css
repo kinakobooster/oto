@@ -2,8 +2,8 @@
   text-align: center;
 }
 
-div.blue {
-  background: #0000FF;
+.diatonic {
+  background: #AAFFAA;
 }
 
 .App-logo {
@@ -28,15 +28,25 @@ div.blue {
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.flex {
+  display: flex;
+  flex-direction: row;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.chordcard {
+  border-radius: 12px;
+  padding: 12px;
+  width: 64px;
+  background: #AAAAFF;
+  margin: 6px;
+  text-align: center;
+}
+
+.scoreboard {
+  height: 200px;
+  align-items: top;
+}
+
+* {
+  box-sizing: border-box;
 }
