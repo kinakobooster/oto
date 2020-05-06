@@ -2,6 +2,9 @@ import React from "react";
 import "./App.css";
 import * as Tone from "tone";
 import ChordCard from "./chordCard";
+import { Container, Draggable } from 'react-smooth-dnd';
+import uniqueId from 'lodash/uniqueId';
+
 
 const synth = new Tone.PolySynth().toMaster();
 
@@ -159,16 +162,22 @@ const isDiatonic = (array) => {
   return strippedchord.length === 0;
 };
 
-const scoreVisible = (score, played, handleDelete) => {
+const scoreVisible = (score, played, handleDelete, handleDrop) => {
   return (
-    <>
+    <div className='flex'>
+      <div>
       {played.map((e,index) => (
-        <ChordCard dead={true} chordName={e.chordName} array={e.sound} deleteCard={() => handleDelete(index,'played') } />
+          <ChordCard dead={true} chordName={e.chordName} array={e.sound} deleteCard={() => handleDelete(index,'played') } />
       ))}
+      </div>
+      <Container onDrop={(e) => handleDrop(e)}  orientation='horizontal'>
       {score.map((e, index) => (
-        <ChordCard chordName={e.chordName} array={e.sound}  deleteCard={() => handleDelete(index,'score')} />
+        <Draggable key={uniqueId()}>
+           <ChordCard chordName={e.chordName} array={e.sound}  deleteCard={() => handleDelete(index,'score')} />
+        </Draggable>
       ))}
-    </>
+      </Container>
+    </div>
   );
 };
 
@@ -183,6 +192,7 @@ class App extends React.Component {
     this.pushToScore = this.pushToScore.bind(this);
     this.handleLoop = this.handleLoop.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
     this.loop();
   }
   handleLoop() {
@@ -230,8 +240,20 @@ class App extends React.Component {
       arr.splice(index, 1)
       this.setState({score: arr})
     }
-
   }
+  handleDrop(event) {
+    const { removedIndex, addedIndex, payload } = event;
+    if(this.state.isPlay) {return}
+    if (removedIndex !== null || addedIndex !== null) {
+      let arr = this.state.score
+      const itemToAdd = arr[removedIndex]
+      arr.splice(removedIndex, 1)
+      arr.splice(addedIndex, 0 , itemToAdd)
+      console.log(arr)
+      this.setState({score: arr})
+    }
+  }
+
 
   render() {
     return (
@@ -243,7 +265,7 @@ class App extends React.Component {
         </button>
         <h2>score</h2>
         <div className="yoko scoreboard">
-          {scoreVisible(this.state.score, this.state.played, this.handleDelete)}
+          {scoreVisible(this.state.score, this.state.played, this.handleDelete, this.handleDrop)}
         </div>
         <h2>note</h2>
         {scaleNotes.map((e) => {
