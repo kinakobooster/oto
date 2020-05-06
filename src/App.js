@@ -22,7 +22,12 @@ const OCTAVE = 12
 const CHORDSEED = {
   octaves: [-12, 0 ,12],
   major: [0,4,7],
-  minor: [0,3,7]
+  major7th: [0,4,7,11],
+  majormajor7th: [0,4,7,10],
+  majoradd9: [0,4,7,14],
+  minor: [0,3,7],
+  minor7th: [0,3,7,11],
+  minormajor7th: [0,3,7,10]
 }
 
 const scaleNum = (scaleKeyNum, scaleseedNumArray) => {
@@ -114,17 +119,6 @@ const getArraysIntersectCount = (array01, array02) => {
 
 // 和音をつくる
 const makeHarmony = (start,array) => Tone.Frequency(start).harmonize(array).map(e => e.toNote())
-// いろんな和音をつくる
-const majorHarmony = (start) => makeHarmony(start,[-12,0,4,7])
-const majorHarmony2iv = (start) => makeHarmony(start,[-12,4,7,12])
-const majorHarmony3iv = (start) => makeHarmony(start,[-12,7, 12, 16])
-
-const major7Harmony = (start) => makeHarmony(start,[-12,0,4,7,11])
-const major9Harmony = (start) => makeHarmony(start,[-12,0,4,9,14])
-
-const minorHarmony = (start) => makeHarmony(start,[-12,0, 3, 7])
-const minorHarmony2iv = (start) => makeHarmony(start,[-12,3, 7, 12])
-const minorHarmony3iv = (start) => makeHarmony(start,[-12,7, 12, 15])
 
 // ダイアトニックかしらべる
 const isDiatonic = (array) => {
@@ -187,50 +181,27 @@ class App extends React.Component {
         return <button onClick={() => makeSomeNoise(e)} >{e}</button>})}
       <h2>勝手に近い転回形をえらぶ</h2>
       {scale.map((note) => {
-        const majorNotesNum = CHORDSEED.major.map((seeds) => (seeds + note))
-        const majorChord = { chordRootNum: note, chordSeed: majorNotesNum, chordName: transposeNoteFromC4(note).slice(0,1)}
-        //const minorNotesNum = CHORDSEED.minor.map((seeds) => (seeds + note))
-        //const minorChord = { chordRootNum: note, chordSeed: minorNotesNum, chordName: transposeNoteFromC4(note).slice(0,1)+'m'}
-        const nextChord = nearestChord({
-            beforeChordArr: this.state.score.length === 0 ? [] :this.state.score.slice(-1)[0].noteNum,
-            chordRootNum: majorChord.chordRootNum,
-            chordSeed: majorChord.chordSeed,
-            chordName: majorChord.chordName})
-        return (
-          <button
-          className={isDiatonic(majorChord.chordSeed.map((e) => transposeNoteFromC4(e))) ? 'diatonic' : '' }
-          onClick={() => this.pushToScore(nextChord.notes, nextChord.notesNum, majorChord.chordName)}>{majorChord.chordName}</button>
+        let chords = []
+        for( let key of Object.keys(CHORDSEED)) {
+          chords.push({ chordRootNum: note, chordSeed: CHORDSEED[key].map((n) => n + note), chordName: transposeNoteFromC4(note).slice(0,1)+key})
+          }
+        
+        return(chords.map((chord) => {
+          const nextChord = nearestChord({
+              beforeChordArr: this.state.score.length === 0 ? [] :this.state.score.slice(-1)[0].noteNum,
+              chordRootNum: chord.chordRootNum,
+              chordSeed: chord.chordSeed,
+              chordName: chord.chordName})
+          return (
+            <button
+            className={isDiatonic(chord.chordSeed.map((e) => transposeNoteFromC4(e))) ? 'diatonic' : '' }
+            onClick={() => this.pushToScore(nextChord.notes, nextChord.notesNum, nextChord.chordName)}
+            >{nextChord.chordName}</button>
+          )
+        }))
+        }
         )
-      })
       }
-      {/*
-      <h2>major chord</h2>
-        {scaleNotes.map((e) => {
-        const harmony = majorHarmony(e)
-        const harmony2iv = majorHarmony2iv(e)
-        const harmony3iv = majorHarmony3iv(e)
-        const harmony7th = major7Harmony(e)
-        const harmony9th = major9Harmony(e)
-        return <div>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony, e.slice(0,1))} >{e.slice(0,1)}</button>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony2iv, e.slice(0,1))} >{e.slice(0,1)}.2iv</button>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony3iv, e.slice(0,1))} >{e.slice(0,1)}.3iv</button>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony7th, e.slice(0,1)+"7")} >{e.slice(0,1)}7</button>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony9th, e.slice(0,1)+"9")} >{e.slice(0,1)}9</button>
-        </div>
-        })}
-      <h2>minor chord</h2>
-        {scaleNotes.map((e) => {
-        const harmony = minorHarmony(e)
-        const harmony2iv = minorHarmony2iv(e)
-        const harmony3iv = minorHarmony3iv(e)
-        return <div>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony, e.slice(0,1)+"m")} >{e.slice(0,1)}m</button>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony2iv, e.slice(0,1)+"m")} >{e.slice(0,1)}m.2iv</button>
-        <button className={isDiatonic(harmony) ? 'diatonic' : '' } onClick={() => this.pushToScore(harmony3iv, e.slice(0,1)+"m")} >{e.slice(0,1)}m.3iv</button>
-        </div>
-        })}
-        */}
       </>
     )
   }
