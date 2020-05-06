@@ -187,6 +187,12 @@ class App extends React.Component {
   handleLoop() {
     const synth = new Tone.PolySynth().toMaster();
     this.setState({ isPlay: !this.state.isPlay });
+    if (this.state.isPlay && this.state.score.length === 0) {
+      this.setState({
+        score: this.state.played,
+        played: [],
+      });
+    }
   }
   pushToScore(notesArr, noteNumArr, chordName) {
     this.setState({
