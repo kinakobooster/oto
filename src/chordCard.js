@@ -1,13 +1,16 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
 
 const ChordCard = (props) => (
-    <div className='chordcard'>
-        <h3 className="chordname">{props.chordName}</h3>
-        {props.array.concat().reverse().map((e) => (
-            <div className="notes">{e}</div>
-        ))}
-    </div>
-)
+  <div className={`chordcard${props.dead ? " dead" : ""}`}>
+    <h3 className="chordname">{props.chordName}</h3>
+    {props.array
+      .concat()
+      .reverse()
+      .map((e) => (
+        <div className="notes">{e}</div>
+      ))}
+  </div>
+);
 
-export default ChordCard
+export default ChordCard;

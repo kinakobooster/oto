@@ -6,17 +6,6 @@
   background: #AAFFAA;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -34,17 +23,30 @@
 }
 
 .chordcard {
+  display: inline-block;
   border-radius: 12px;
   padding: 12px;
-  width: 64px;
+  width: 100px;
+  height: 200px;
   background: #AAAAFF;
   margin: 6px;
   text-align: center;
+  vertical-align:top;
+}
+
+.dead {
+  background: #AAAAAA !important;
+}
+
+.yoko {
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
 }
 
 .scoreboard {
-  height: 200px;
-  align-items: top;
+  height: 250px;
+  background: #EEEEEE;
 }
 
 * {
